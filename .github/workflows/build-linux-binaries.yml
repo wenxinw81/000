@@ -1,0 +1,33 @@
+name: Build Linux Binaries
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build app and rs485
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build Linux binaries
+        working-directory: server
+        run: |
+          chmod +x build_linux_binaries.sh
+          ./build_linux_binaries.sh
+
+      - name: Upload Linux binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-authorized-binaries
+          path: |
+            server/dist/app
+            server/dist/rs485
+          if-no-files-found: error
